@@ -1,0 +1,13 @@
+package org.example.service;
+
+import org.example.entity.Schedule;
+import org.example.request.ScheduleRequest;
+import org.springframework.stereotype.Service;
+
+@Service
+public interface ScheduleService {
+
+    Schedule createSchedule(ScheduleRequest scheduleRequest);
+
+
+}

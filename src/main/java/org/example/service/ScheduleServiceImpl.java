@@ -1,0 +1,28 @@
+package org.example.service;
+
+import lombok.RequiredArgsConstructor;
+import org.example.dto.ScheduleRequestDto;
+import org.example.entity.Schedule;
+import org.example.mapper.ScheduleMapper;
+import org.example.repository.ScheduleRepository;
+import org.example.request.ScheduleRequest;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+@RequiredArgsConstructor
+@Transactional
+public class ScheduleServiceImpl implements ScheduleService {
+
+    private final ScheduleRepository scheduleRepository;
+    private final ScheduleMapper scheduleMapper;
+
+
+    @Override
+    public Schedule createSchedule(ScheduleRequest scheduleRequest) {
+
+        var scheduleRequestDto = scheduleMapper.toScheduleDto(scheduleRequest); // JSON → DTO
+        var scheduleRequestEntity = scheduleMapper.toScheduleEntity(scheduleRequestDto);   // DTO → Entity
+        return scheduleRepository.save(scheduleRequestEntity);
+    }
+}
