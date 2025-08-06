@@ -63,7 +63,6 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <version>1.18.28</version>
-            <!-- scope는 필요하면 'provided' 대신 'compile'로 바꿔보세요 -->
             <scope>provided</scope>
         </dependency>
 
@@ -73,7 +72,16 @@
             <artifactId>mapstruct</artifactId>
             <version>${mapstruct.version}</version>
         </dependency>
+
+        <!-- Junit -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
+
+
 
     <build>
         <plugins>

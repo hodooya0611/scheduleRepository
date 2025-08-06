@@ -4,6 +4,7 @@ import org.example.dto.ScheduleRequestDto;
 import org.example.entity.Schedule;
 import org.example.request.ScheduleRequest;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
 public interface ScheduleMapper {

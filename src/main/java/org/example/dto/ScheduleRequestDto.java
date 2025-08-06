@@ -1,11 +1,24 @@
 package org.example.dto;
 
-import java.time.LocalDateTime;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.Getter;
+import lombok.Setter;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
+
+@Getter
+@Setter
 public class ScheduleRequestDto {
 
     private String title;
-    private LocalDateTime startDateTime;
-    private LocalDateTime endDateTime;
+
+    private LocalDate date;
+
+    @JsonFormat(pattern = "HH:mm")
+    private LocalTime startDateTime;
+
+    @JsonFormat(pattern = "HH:mm")
+    private LocalTime endDateTime;
 
 }

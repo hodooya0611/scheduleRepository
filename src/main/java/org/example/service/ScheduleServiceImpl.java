@@ -22,7 +22,9 @@ public class ScheduleServiceImpl implements ScheduleService {
     public Schedule createSchedule(ScheduleRequest scheduleRequest) {
 
         var scheduleRequestDto = scheduleMapper.toScheduleDto(scheduleRequest); // JSON → DTO
-        var scheduleRequestEntity = scheduleMapper.toScheduleEntity(scheduleRequestDto);   // DTO → Entity
+        System.out.println("scheduleRequestDto" + scheduleRequestDto);
+       var scheduleRequestEntity = scheduleMapper.toScheduleEntity(scheduleRequestDto);   // DTO → Entity
+        System.out.println("scheduleRequestEntity" + scheduleRequestEntity);
         return scheduleRepository.save(scheduleRequestEntity);
     }
 }

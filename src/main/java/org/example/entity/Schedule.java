@@ -3,7 +3,9 @@ package org.example.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 @Entity
 @Getter
@@ -19,8 +21,9 @@ public class Schedule {
     private Long id;
 
     private String title;
-    private LocalDateTime startDateTime;
-    private LocalDateTime endDateTime;
+    private LocalDate date;
+    private LocalTime startDateTime;
+    private LocalTime endDateTime;
 
 
 }

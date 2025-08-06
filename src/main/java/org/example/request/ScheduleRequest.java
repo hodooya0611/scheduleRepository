@@ -1,11 +1,15 @@
 package org.example.request;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 public record ScheduleRequest(
         String title,
-        LocalDateTime startDateTime,
-        LocalDateTime endDateTime
+        LocalDate date,
+        LocalTime startDateTime,
+        LocalTime endDateTime
+
 ) {
 
 }
