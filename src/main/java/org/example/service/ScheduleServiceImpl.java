@@ -2,7 +2,6 @@ package org.example.service;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.example.dto.ScheduleRequestDto;
 import org.example.entity.Schedule;
 import org.example.mapper.ScheduleMapper;
 import org.example.repository.ScheduleRepository;
@@ -21,17 +20,15 @@ public class ScheduleServiceImpl implements ScheduleService {
 
     @Override
     public Schedule createSchedule(ScheduleRequest scheduleRequest) {
-
         var scheduleRequestDto = scheduleMapper.toScheduleDto(scheduleRequest); // JSON → DTO
-        System.out.println("scheduleRequestDto" + scheduleRequestDto);
-       var scheduleRequestEntity = scheduleMapper.toScheduleEntity(scheduleRequestDto);   // DTO → Entity
-        System.out.println("scheduleRequestEntity" + scheduleRequestEntity);
+        var scheduleRequestEntity = scheduleMapper.toScheduleEntity(scheduleRequestDto);   // DTO → Entity
         return scheduleRepository.save(scheduleRequestEntity);
     }
 
     @Override
     public Schedule findSchedule(Long id) {
-        return scheduleRepository.findById(id).orElseThrow(()->new EntityNotFoundException("Schedule not found with id: " + id));
+        return scheduleRepository.findById(id)
+                .orElseThrow(()->new EntityNotFoundException("Schedule not found with id: " + id));
     }
 
 }
