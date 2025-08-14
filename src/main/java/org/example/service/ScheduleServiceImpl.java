@@ -1,5 +1,6 @@
 package org.example.service;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.example.dto.ScheduleRequestDto;
 import org.example.entity.Schedule;
@@ -27,4 +28,10 @@ public class ScheduleServiceImpl implements ScheduleService {
         System.out.println("scheduleRequestEntity" + scheduleRequestEntity);
         return scheduleRepository.save(scheduleRequestEntity);
     }
+
+    @Override
+    public Schedule findSchedule(Long id) {
+        return scheduleRepository.findById(id).orElseThrow(()->new EntityNotFoundException("Schedule not found with id: " + id));
+    }
+
 }

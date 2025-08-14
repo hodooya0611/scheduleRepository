@@ -1,10 +1,10 @@
 package org.example.mapper;
 
 import org.example.dto.ScheduleRequestDto;
+import org.example.dto.ScheduleResponseDto;
 import org.example.entity.Schedule;
 import org.example.request.ScheduleRequest;
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
 public interface ScheduleMapper {
@@ -12,4 +12,6 @@ public interface ScheduleMapper {
     ScheduleRequestDto toScheduleDto (ScheduleRequest scheduleRequest);
 
     Schedule toScheduleEntity (ScheduleRequestDto scheduleRequestDto);
+
+    ScheduleResponseDto toScheduleResponseDto(Schedule scheduleEntity);
 }

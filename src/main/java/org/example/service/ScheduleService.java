@@ -9,5 +9,6 @@ public interface ScheduleService {
 
     Schedule createSchedule(ScheduleRequest scheduleRequest);
 
+    Schedule findSchedule(Long id);
 
 }
