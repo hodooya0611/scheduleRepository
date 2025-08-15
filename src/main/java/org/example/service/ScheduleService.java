@@ -11,4 +11,6 @@ public interface ScheduleService {
 
     Schedule findSchedule(Long id);
 
+    Schedule updateSchedule(Long id, ScheduleRequest scheduleRequest);
+
 }

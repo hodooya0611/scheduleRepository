@@ -13,6 +13,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
@@ -98,5 +99,50 @@ public class ScheduleServiceTest {
         assertEquals(scheduleId, result.getId(), "Schedule ID should match");
         assertEquals("meeting", result.getTitle(),"Schedule title should match");
         System.out.println("FindSchedule Test Result: " + result);
+    }
+
+    @Test
+    public void testUpdateSchedule() {
+        // given
+        Long scheduleId = 1L;
+        Schedule existingSchedule = new Schedule(
+                scheduleId,
+                "Old Meeting",
+                LocalDate.of(2025, 8, 15),
+                LocalTime.of(9, 0),
+                LocalTime.of(10, 0)
+        );
+
+        ScheduleRequest updateRequest = new ScheduleRequest(
+                "New Meeting",
+                LocalDate.of(2025, 8, 16),
+                LocalTime.of(14, 0),
+                LocalTime.of(15, 0)
+        );
+
+
+        Schedule updatedSchedule = new Schedule(
+                scheduleId,
+                updateRequest.title(),
+                updateRequest.date(),
+                updateRequest.startDateTime(),
+                updateRequest.endDateTime()
+        );
+
+        when(scheduleRepository.findById(scheduleId)).thenReturn(Optional.of(existingSchedule));
+        when(scheduleRepository.save(any(Schedule.class))).thenReturn(updatedSchedule);
+
+        // when
+        Schedule result = scheduleService.updateSchedule(scheduleId, updateRequest);
+
+        // then
+        assertNotNull(result);
+        assertEquals(updateRequest.title(), result.getTitle());
+        assertEquals(updateRequest.date(), result.getDate());
+        assertEquals(updateRequest.startDateTime(), result.getStartDateTime());
+        assertEquals(updateRequest.endDateTime(), result.getEndDateTime());
+
+        verify(scheduleRepository).findById(scheduleId);
+        verify(scheduleRepository).save(existingSchedule);
     }
 }

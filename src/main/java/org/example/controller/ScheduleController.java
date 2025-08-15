@@ -25,4 +25,9 @@ public class ScheduleController {
         var scheduleResult = scheduleService.findSchedule(id);
         return scheduleMapper.toScheduleResponseDto(scheduleResult);
     }
+
+    @PostMapping
+    public Schedule updateSchedule(@RequestBody ScheduleRequest schedule) {
+        return scheduleService.createSchedule(schedule);
+    }
 }

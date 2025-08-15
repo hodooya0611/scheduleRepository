@@ -31,4 +31,18 @@ public class ScheduleServiceImpl implements ScheduleService {
                 .orElseThrow(()->new EntityNotFoundException("Schedule not found with id: " + id));
     }
 
+    @Override
+    public Schedule updateSchedule(Long id, ScheduleRequest request) {
+
+        Schedule schedule = scheduleRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Schedule not found: " + id));
+
+        schedule.setTitle(request.title());
+        schedule.setDate(request.date());
+        schedule.setStartDateTime(request.startDateTime());
+        schedule.setEndDateTime(request.endDateTime());
+
+        return scheduleRepository.save(schedule);
+    }
+
 }
