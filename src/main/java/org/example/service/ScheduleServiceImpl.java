@@ -45,4 +45,13 @@ public class ScheduleServiceImpl implements ScheduleService {
         return scheduleRepository.save(schedule);
     }
 
+    @Override
+    public void deleteSchedule(Long id) {
+        Schedule schedule = scheduleRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Schedule not found: " + id));
+
+        scheduleRepository.delete(schedule);
+    }
+
+
 }

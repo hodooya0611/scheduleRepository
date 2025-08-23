@@ -6,6 +6,7 @@ import org.example.entity.Schedule;
 import org.example.mapper.ScheduleMapper;
 import org.example.request.ScheduleRequest;
 import org.example.service.ScheduleService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -30,4 +31,11 @@ public class ScheduleController {
     public Schedule updateSchedule(@RequestBody ScheduleRequest schedule) {
         return scheduleService.createSchedule(schedule);
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteSchedule(@PathVariable Long id) {
+        scheduleService.deleteSchedule(id);
+        return ResponseEntity.noContent().build();
+    }
+
 }

@@ -19,8 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class ScheduleServiceTest {
@@ -144,5 +143,31 @@ public class ScheduleServiceTest {
 
         verify(scheduleRepository).findById(scheduleId);
         verify(scheduleRepository).save(existingSchedule);
+    }
+
+    @Test
+    public void testDeleteSchedule() {
+        // given
+        Long scheduleId = 1L;
+        Schedule existingSchedule = new Schedule(
+                scheduleId,
+                "Old Meeting",
+                LocalDate.of(2025,8,15),
+                LocalTime.of(9,0),
+                LocalTime.of(10, 0)
+        );
+
+        // Mock 동작 정의
+        when(scheduleRepository.findById(scheduleId)).thenReturn(java.util.Optional.of(existingSchedule));
+
+        // when
+        scheduleService.deleteSchedule(scheduleId);
+
+        // Then
+        verify(scheduleRepository, times(1)).findById(scheduleId);
+        verify(scheduleRepository, times(1)).delete(existingSchedule);
+
+
+
     }
 }
