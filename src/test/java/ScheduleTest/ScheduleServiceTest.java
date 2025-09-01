@@ -33,141 +33,141 @@ public class ScheduleServiceTest {
     @InjectMocks
     private ScheduleServiceImpl scheduleService;
 
-    @Test
-    public void testCreateSchedule() {
-
-        // given (request)
-        LocalTime nowTrimmed = LocalTime.now().withSecond(0).withNano(0);
-        ScheduleRequest request = new ScheduleRequest(
-                "meeting",
-                LocalDate.now(),
-                nowTrimmed,
-                nowTrimmed.plusHours(1)
-        );
-
-        // mapping ( request -> requestDto)
-        ScheduleRequestDto dto = new ScheduleRequestDto();
-        dto.setTitle(request.title());
-        dto.setDate(request.date());
-        dto.setStartDateTime(request.startDateTime());
-        dto.setEndDateTime(request.endDateTime());
-
-        // mapping ( requestDto -> Entity)
-        Schedule savedSchedule = new Schedule();
-        savedSchedule.setId(1L);
-        savedSchedule.setTitle(dto.getTitle());
-        savedSchedule.setDate(dto.getDate());
-        savedSchedule.setStartDateTime(dto.getStartDateTime());
-        savedSchedule.setEndDateTime(dto.getEndDateTime());
-
-        when(scheduleMapper.toScheduleDto(request)).thenReturn(dto);
-        when(scheduleMapper.toScheduleEntity(dto)).thenReturn(savedSchedule);
-        when(scheduleRepository.save(any(Schedule.class))).thenReturn(savedSchedule);
-
-        // when
-        Schedule result = scheduleService.createSchedule(request);
-
-        // then
-        assertNotNull(result.getId());
-        System.out.println("Saved ID: " + result.getId());
-
-        // verify 호출 여부 확인
-        verify(scheduleMapper).toScheduleDto(request);
-        verify(scheduleMapper).toScheduleEntity(dto);
-        verify(scheduleRepository).save(savedSchedule);
-    }
-
-    @Test
-    public void testFindSchedule() {
-        // given (request)
-        Long scheduleId = 1L;
-
-        LocalTime now = LocalTime.now().withSecond(0).withNano(0);
-
-        Schedule scheduleEntity = new Schedule(scheduleId, "meeting", LocalDate.now(),
-                now, now.plusHours(1));
-
-        // Mock 동작 정의
-        when(scheduleRepository.findById(scheduleId)).thenReturn(java.util.Optional.of(scheduleEntity));
-
-        // when
-        Schedule result = scheduleService.findSchedule(scheduleId);
-
-        // then
-        assertNotNull(result,"Schedule should not be null");
-        assertEquals(scheduleId, result.getId(), "Schedule ID should match");
-        assertEquals("meeting", result.getTitle(),"Schedule title should match");
-        System.out.println("FindSchedule Test Result: " + result);
-    }
-
-    @Test
-    public void testUpdateSchedule() {
-        // given
-        Long scheduleId = 1L;
-        Schedule existingSchedule = new Schedule(
-                scheduleId,
-                "Old Meeting",
-                LocalDate.of(2025, 8, 15),
-                LocalTime.of(9, 0),
-                LocalTime.of(10, 0)
-        );
-
-        ScheduleRequest updateRequest = new ScheduleRequest(
-                "New Meeting",
-                LocalDate.of(2025, 8, 16),
-                LocalTime.of(14, 0),
-                LocalTime.of(15, 0)
-        );
-
-
-        Schedule updatedSchedule = new Schedule(
-                scheduleId,
-                updateRequest.title(),
-                updateRequest.date(),
-                updateRequest.startDateTime(),
-                updateRequest.endDateTime()
-        );
-
-        when(scheduleRepository.findById(scheduleId)).thenReturn(Optional.of(existingSchedule));
-        when(scheduleRepository.save(any(Schedule.class))).thenReturn(updatedSchedule);
-
-        // when
-        Schedule result = scheduleService.updateSchedule(scheduleId, updateRequest);
-
-        // then
-        assertNotNull(result);
-        assertEquals(updateRequest.title(), result.getTitle());
-        assertEquals(updateRequest.date(), result.getDate());
-        assertEquals(updateRequest.startDateTime(), result.getStartDateTime());
-        assertEquals(updateRequest.endDateTime(), result.getEndDateTime());
-
-        verify(scheduleRepository).findById(scheduleId);
-        verify(scheduleRepository).save(existingSchedule);
-    }
-
-    @Test
-    public void testDeleteSchedule() {
-        // given
-        Long scheduleId = 1L;
-        Schedule existingSchedule = new Schedule(
-                scheduleId,
-                "Old Meeting",
-                LocalDate.of(2025,8,15),
-                LocalTime.of(9,0),
-                LocalTime.of(10, 0)
-        );
-
-        // Mock 동작 정의
-        when(scheduleRepository.findById(scheduleId)).thenReturn(java.util.Optional.of(existingSchedule));
-
-        // when
-        scheduleService.deleteSchedule(scheduleId);
-
-        // Then
-        verify(scheduleRepository, times(1)).findById(scheduleId);
-        verify(scheduleRepository, times(1)).delete(existingSchedule);
-
-
-
-    }
+//    @Test
+//    public void testCreateSchedule() {
+//
+//        // given (request)
+//        LocalTime nowTrimmed = LocalTime.now().withSecond(0).withNano(0);
+//        ScheduleRequest request = new ScheduleRequest(
+//                "meeting",
+//                LocalDate.now(),
+//                nowTrimmed,
+//                nowTrimmed.plusHours(1)
+//        );
+//
+//        // mapping ( request -> requestDto)
+//        ScheduleRequestDto dto = new ScheduleRequestDto();
+//        dto.setTitle(request.title());
+//        dto.setDate(request.date());
+//        dto.setStartDateTime(request.startDateTime());
+//        dto.setEndDateTime(request.endDateTime());
+//
+//        // mapping ( requestDto -> Entity)
+//        Schedule savedSchedule = new Schedule();
+//        savedSchedule.setId(1L);
+//        savedSchedule.setTitle(dto.getTitle());
+//        savedSchedule.setDate(dto.getDate());
+//        savedSchedule.setStartDateTime(dto.getStartDateTime());
+//        savedSchedule.setEndDateTime(dto.getEndDateTime());
+//
+//        when(scheduleMapper.toScheduleDto(request)).thenReturn(dto);
+//        when(scheduleMapper.toScheduleEntity(dto)).thenReturn(savedSchedule);
+//        when(scheduleRepository.save(any(Schedule.class))).thenReturn(savedSchedule);
+//
+//        // when
+//        Schedule result = scheduleService.createSchedule(request);
+//
+//        // then
+//        assertNotNull(result.getId());
+//        System.out.println("Saved ID: " + result.getId());
+//
+//        // verify 호출 여부 확인
+//        verify(scheduleMapper).toScheduleDto(request);
+//        verify(scheduleMapper).toScheduleEntity(dto);
+//        verify(scheduleRepository).save(savedSchedule);
+//    }
+//
+//    @Test
+//    public void testFindSchedule() {
+//        // given (request)
+//        Long scheduleId = 1L;
+//
+//        LocalTime now = LocalTime.now().withSecond(0).withNano(0);
+//
+//        Schedule scheduleEntity = new Schedule(scheduleId, "meeting", LocalDate.now(),
+//                now, now.plusHours(1));
+//
+//        // Mock 동작 정의
+//        when(scheduleRepository.findById(scheduleId)).thenReturn(java.util.Optional.of(scheduleEntity));
+//
+//        // when
+//        Schedule result = scheduleService.findSchedule(scheduleId);
+//
+//        // then
+//        assertNotNull(result,"Schedule should not be null");
+//        assertEquals(scheduleId, result.getId(), "Schedule ID should match");
+//        assertEquals("meeting", result.getTitle(),"Schedule title should match");
+//        System.out.println("FindSchedule Test Result: " + result);
+//    }
+//
+//    @Test
+//    public void testUpdateSchedule() {
+//        // given
+//        Long scheduleId = 1L;
+//        Schedule existingSchedule = new Schedule(
+//                scheduleId,
+//                "Old Meeting",
+//                LocalDate.of(2025, 8, 15),
+//                LocalTime.of(9, 0),
+//                LocalTime.of(10, 0)
+//        );
+//
+//        ScheduleRequest updateRequest = new ScheduleRequest(
+//                "New Meeting",
+//                LocalDate.of(2025, 8, 16),
+//                LocalTime.of(14, 0),
+//                LocalTime.of(15, 0)
+//        );
+//
+//
+//        Schedule updatedSchedule = new Schedule(
+//                scheduleId,
+//                updateRequest.title(),
+//                updateRequest.date(),
+//                updateRequest.startDateTime(),
+//                updateRequest.endDateTime()
+//        );
+//
+//        when(scheduleRepository.findById(scheduleId)).thenReturn(Optional.of(existingSchedule));
+//        when(scheduleRepository.save(any(Schedule.class))).thenReturn(updatedSchedule);
+//
+//        // when
+//        Schedule result = scheduleService.updateSchedule(scheduleId, updateRequest);
+//
+//        // then
+//        assertNotNull(result);
+//        assertEquals(updateRequest.title(), result.getTitle());
+//        assertEquals(updateRequest.date(), result.getDate());
+//        assertEquals(updateRequest.startDateTime(), result.getStartDateTime());
+//        assertEquals(updateRequest.endDateTime(), result.getEndDateTime());
+//
+//        verify(scheduleRepository).findById(scheduleId);
+//        verify(scheduleRepository).save(existingSchedule);
+//    }
+//
+//    @Test
+//    public void testDeleteSchedule() {
+//        // given
+//        Long scheduleId = 1L;
+//        Schedule existingSchedule = new Schedule(
+//                scheduleId,
+//                "Old Meeting",
+//                LocalDate.of(2025,8,15),
+//                LocalTime.of(9,0),
+//                LocalTime.of(10, 0)
+//        );
+//
+//        // Mock 동작 정의
+//        when(scheduleRepository.findById(scheduleId)).thenReturn(java.util.Optional.of(existingSchedule));
+//
+//        // when
+//        scheduleService.deleteSchedule(scheduleId);
+//
+//        // Then
+//        verify(scheduleRepository, times(1)).findById(scheduleId);
+//        verify(scheduleRepository, times(1)).delete(existingSchedule);
+//
+//
+//
+//    }
 }

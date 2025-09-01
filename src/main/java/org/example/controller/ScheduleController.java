@@ -9,7 +9,10 @@ import org.example.service.ScheduleService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
+@RequestMapping("/api/schedules")
 @RequiredArgsConstructor
 public class ScheduleController {
 
@@ -21,13 +24,14 @@ public class ScheduleController {
         return scheduleService.createSchedule(schedule);
     }
 
-    @GetMapping("/{id}")
-    public ScheduleResponseDto findSchedule(@PathVariable Long id) {
-        var scheduleResult = scheduleService.findSchedule(id);
+    @GetMapping
+    public List<ScheduleResponseDto> findSchedule( @RequestParam String startDate,
+                                                   @RequestParam String endDate) {
+        var scheduleResult = scheduleService.findSchedule(startDate,endDate);
         return scheduleMapper.toScheduleResponseDto(scheduleResult);
     }
 
-    @PostMapping
+    @PostMapping("/update/{id}")
     public Schedule updateSchedule(@RequestBody ScheduleRequest schedule) {
         return scheduleService.createSchedule(schedule);
     }
