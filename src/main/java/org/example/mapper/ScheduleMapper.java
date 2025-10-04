@@ -15,7 +15,7 @@ public interface ScheduleMapper {
 
     Schedule toScheduleEntity (ScheduleRequestDto scheduleRequestDto);
 
-    List<ScheduleResponseDto> toScheduleResponseDto(List<Schedule> scheduleEntity);
+    List<ScheduleResponseDto> toScheduleListResponseDto(List<Schedule> scheduleEntity);
 
     ScheduleResponseDto toScheduleResponseDto(Schedule scheduleEntity);
 }

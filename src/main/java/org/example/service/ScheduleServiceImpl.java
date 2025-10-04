@@ -2,6 +2,7 @@ package org.example.service;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.example.dto.ScheduleResponseDto;
 import org.example.entity.Schedule;
 import org.example.mapper.ScheduleMapper;
 import org.example.repository.ScheduleRepository;
@@ -29,7 +30,7 @@ public class ScheduleServiceImpl implements ScheduleService {
     }
 
     @Override
-    public List<Schedule> findSchedule(String startDate, String endDate) {
+    public List<Schedule> findAllSchedule(String startDate, String endDate) {
 
         LocalDate start = LocalDate.parse(startDate);
         LocalDate end = LocalDate.parse(endDate);
@@ -39,34 +40,23 @@ public class ScheduleServiceImpl implements ScheduleService {
     }
 
     @Override
-    public Schedule updateSchedule(Long id, ScheduleRequest request) {
+    public ScheduleResponseDto findSchedule(Long id) {
+
+        var schedule = scheduleRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("해당 스케줄을 찾을 수 없습니다. id=" + id));
+
+        return scheduleMapper.toScheduleResponseDto(schedule);
+    }
+
+    @Override
+    @Transactional
+    public void updateSchedule(Long id, ScheduleRequest request) {
         Schedule schedule = scheduleRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Schedule not found: " + id));
 
-        // 기본 정보
-        schedule.setTitle(request.title());
-        schedule.setContent(request.content());
-        schedule.setAllDay(request.allDay());
+        var scheduleRequestDto = scheduleMapper.toScheduleDto(request);
 
-        // 날짜/시간 (하루종일이면 시간은 null 처리 가능)
-        schedule.setStartDate(request.startDate());
-        schedule.setStartTime(request.allDay() ? null : request.startTime());
-        schedule.setEndDate(request.endDate());
-        schedule.setEndTime(request.allDay() ? null : request.endTime());
+        schedule.updateSchedule(scheduleRequestDto);
 
-        // 알람 관련
-        schedule.setAlarmEnabled(request.alarmEnabled());
-        schedule.setAlarmOption(request.alarmOption());
-
-        if ("직접입력".equals(request.alarmOption())) {
-            schedule.setAlarmDate(request.alarmDate());
-            schedule.setAlarmTime(request.alarmTime());
-        } else {
-            schedule.setAlarmDate(null);
-            schedule.setAlarmTime(null);
-        }
-
-        return scheduleRepository.save(schedule);
     }
 
     @Override

@@ -25,15 +25,26 @@ public class ScheduleController {
     }
 
     @GetMapping
-    public List<ScheduleResponseDto> findSchedule( @RequestParam String startDate,
-                                                   @RequestParam String endDate) {
-        var scheduleResult = scheduleService.findSchedule(startDate,endDate);
-        return scheduleMapper.toScheduleResponseDto(scheduleResult);
+    public List<ScheduleResponseDto> findAllSchedule(@RequestParam String startDate,
+                                                     @RequestParam String endDate) {
+        var scheduleResult = scheduleService.findAllSchedule(startDate,endDate);
+        return scheduleMapper.toScheduleListResponseDto(scheduleResult);
+    }
+
+    @GetMapping("/view/{id}")
+    public ResponseEntity<ScheduleResponseDto> findSchedule(@PathVariable Long id) {
+
+        var schedule = scheduleService.findSchedule(id);
+
+        return ResponseEntity.ok(schedule);
     }
 
     @PostMapping("/update/{id}")
-    public Schedule updateSchedule(@RequestBody ScheduleRequest schedule) {
-        return scheduleService.createSchedule(schedule);
+    public ResponseEntity<Void> updateSchedule(
+            @PathVariable Long id,
+            @RequestBody ScheduleRequest scheduleRequest) {
+        scheduleService.updateSchedule(id, scheduleRequest);
+        return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/{id}")
