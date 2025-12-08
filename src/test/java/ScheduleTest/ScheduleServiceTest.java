@@ -1,25 +1,17 @@
 package ScheduleTest;
 
-import org.example.dto.ScheduleRequestDto;
-import org.example.entity.Schedule;
-import org.example.mapper.ScheduleMapper;
-import org.example.repository.ScheduleRepository;
-import org.example.request.ScheduleRequest;
-import org.example.service.ScheduleServiceImpl;
-import org.junit.jupiter.api.Test;
+import com.spring.mapper.ScheduleMapper;
+import com.spring.repository.ScheduleRepository;
+import com.spring.service.ScheduleServiceImpl;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class ScheduleServiceTest {
