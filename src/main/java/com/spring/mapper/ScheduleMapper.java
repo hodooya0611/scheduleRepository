@@ -1,7 +1,7 @@
 package com.spring.mapper;
 
+import com.spring.dto.ScheduleDetailResponseDto;
 import com.spring.dto.ScheduleRequestDto;
-import com.spring.dto.ScheduleResponseDto;
 import com.spring.domain.Schedule;
 import com.spring.request.ScheduleRequest;
 import org.mapstruct.Mapper;
@@ -15,7 +15,7 @@ public interface ScheduleMapper {
 
     Schedule toScheduleEntity (ScheduleRequestDto scheduleRequestDto);
 
-    List<ScheduleResponseDto> toScheduleListResponseDto(List<Schedule> scheduleEntity);
+    List<ScheduleDetailResponseDto> toScheduleListResponseDto(List<Schedule> scheduleEntity);
 
-    ScheduleResponseDto toScheduleResponseDto(Schedule scheduleEntity);
+    ScheduleDetailResponseDto toScheduleResponseDto(Schedule scheduleEntity);
 }

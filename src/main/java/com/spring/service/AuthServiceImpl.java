@@ -44,7 +44,7 @@ public class AuthServiceImpl implements AuthService {
             throw new RuntimeException("비밀번호 틀림");
         }
 
-        String token = jwtUtil.generateToken(member.getMemberId(), member.getRole());
+        String token = jwtUtil.generateToken(member.getId(), member.getRole());
 
         return new LoginResponseDto(token, member.getMemberId(), member.getRole());
     }
@@ -58,7 +58,7 @@ public class AuthServiceImpl implements AuthService {
 
         AuthToken resetToken = AuthToken.builder()
                 .token(token)
-                .memberId(member.getMemberId())
+                .member(member)
                 .expiryDate(LocalDateTime.now().plusMinutes(10))
                 .type(TokenType.PASSWORD_RESET)
                 .used(false)
@@ -88,8 +88,7 @@ public class AuthServiceImpl implements AuthService {
         AuthToken authToken = authTokenRepository.findByToken(request.token())
                 .orElseThrow(() -> new RuntimeException("토큰이 유효하지 않습니다."));
 
-        Member member = memberRepository.findByMemberId(authToken.getMemberId())
-                .orElseThrow(() -> new RuntimeException("회원을 찾을 수 없습니다."));
+        Member member = authToken.getMember();
 
         member.setPassword(passwordEncoder.encode(request.newPassword()));
         memberRepository.save(member);

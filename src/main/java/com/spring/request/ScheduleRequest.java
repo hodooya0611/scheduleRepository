@@ -7,6 +7,9 @@ import java.time.LocalTime;
 
 public record ScheduleRequest(
 
+        // 캘린더 아이디
+        Long calendarId,
+
         // 스케줄 제목
         String title,
 

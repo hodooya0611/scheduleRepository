@@ -8,7 +8,7 @@ import java.time.LocalTime;
 public record CalendarRequest(
 
         // 캘린더 제목
-        String title,
+        String name,
 
         // 내용
         String description

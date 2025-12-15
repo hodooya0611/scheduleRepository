@@ -27,9 +27,9 @@ public class JwtUtil {
     private final long EXPIRATION_TIME = 1000 * 60 * 60;
 
     // 토큰 생성
-    public String generateToken(String memberId, String role) {
+    public String generateToken(Long memberId, String role) {
         return Jwts.builder()
-                .setSubject(memberId)              // 토큰 주체
+                .setSubject(String.valueOf(memberId))              // 토큰 주체
                 .claim("role", role)              // 추가 클레임
                 .setIssuedAt(new Date())          // 발급시간
                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME)) // 만료시간
@@ -47,8 +47,8 @@ public class JwtUtil {
     }
 
     // 토큰에서 memberId 가져오기
-    public String getMemberId(String token) {
-        return extractClaims(token).getSubject();
+    public Long getMemberId(String token) {
+        return Long.valueOf(extractClaims(token).getSubject());
     }
 
     // 토큰에서 role 가져오기

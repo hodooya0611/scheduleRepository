@@ -1,8 +1,12 @@
 package com.spring.service;
 
+import com.spring.domain.Calendar;
+import com.spring.domain.Member;
+import com.spring.repository.CalendarRepository;
+import com.spring.repository.MemberRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-import com.spring.dto.ScheduleResponseDto;
+import com.spring.dto.ScheduleDetailResponseDto;
 import com.spring.domain.Schedule;
 import com.spring.mapper.ScheduleMapper;
 import com.spring.repository.ScheduleRepository;
@@ -20,51 +24,81 @@ public class ScheduleServiceImpl implements ScheduleService {
 
     private final ScheduleRepository scheduleRepository;
     private final ScheduleMapper scheduleMapper;
+    private final MemberRepository memberRepository;
+    private final CalendarRepository calendarRepository;
 
 
     @Override
-    public Schedule createSchedule(ScheduleRequest scheduleRequest) {
-        var scheduleRequestDto = scheduleMapper.toScheduleDto(scheduleRequest); // JSON → DTO
-        var scheduleRequestEntity = scheduleMapper.toScheduleEntity(scheduleRequestDto);   // DTO → Entity
-        return scheduleRepository.save(scheduleRequestEntity);
+    public Schedule createSchedule(Long loginUserId, ScheduleRequest scheduleRequest) {
+
+        Member member = memberRepository.findById(loginUserId).orElseThrow(() -> new IllegalArgumentException("Member not found"));
+
+        Calendar calendar;
+
+        if(scheduleRequest.calendarId() != null) {
+            calendar = calendarRepository.findByIdAndOwner(scheduleRequest.calendarId(),member).orElseThrow(()
+                    ->new IllegalArgumentException("Member not found"));
+        } else {
+            calendar = calendarRepository.findByOwnerAndIsDefaultTrue(member)
+                    .orElseThrow(() -> new IllegalStateException("기본 캘린더 없음"));
+        }
+
+        Schedule schedule = scheduleMapper.toScheduleEntity(scheduleMapper.toScheduleDto(scheduleRequest));
+
+        schedule.setCalendar(calendar);
+
+        return scheduleRepository.save(schedule);
     }
 
     @Override
-    public List<Schedule> findAllSchedule(String startDate, String endDate) {
+    public List<Schedule> findAllSchedule(Long loginUserId,String startDate, String endDate) {
 
         LocalDate start = LocalDate.parse(startDate);
         LocalDate end = LocalDate.parse(endDate);
 
-        var result =scheduleRepository.findByStartDateBetween(start, end);
-        return result;
+        return scheduleRepository
+                .findByCalendar_Owner_IdAndStartDateBetween(
+                        loginUserId,
+                        start,
+                        end
+                );
     }
 
     @Override
-    public ScheduleResponseDto findSchedule(Long id) {
+    public ScheduleDetailResponseDto findSchedule(Long loginUserId, Long id) {
 
-        var schedule = scheduleRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("해당 스케줄을 찾을 수 없습니다. id=" + id));
-
+        Schedule schedule = scheduleRepository
+                .findByIdAndCalendar_Owner_Id(id, loginUserId)
+                .orElseThrow(() ->
+                        new EntityNotFoundException("해당 스케줄이 없거나 접근 권한이 없습니다. id=" + id)
+                );
         return scheduleMapper.toScheduleResponseDto(schedule);
     }
 
     @Override
     @Transactional
-    public void updateSchedule(Long id, ScheduleRequest request) {
-        Schedule schedule = scheduleRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Schedule not found: " + id));
+    public void updateSchedule(Long loginUserId,Long id, ScheduleRequest request) {
+        Schedule schedule = scheduleRepository
+                .findByIdAndCalendar_Owner_Id(id, loginUserId)
+                .orElseThrow(() ->
+                        new EntityNotFoundException("수정 권한이 없는 스케줄입니다. id=" + id)
+                );
 
         var scheduleRequestDto = scheduleMapper.toScheduleDto(request);
-
         schedule.updateSchedule(scheduleRequestDto);
 
     }
 
     @Override
-    public void deleteSchedule(Long id) {
-        Schedule schedule = scheduleRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Schedule not found: " + id));
+    public void deleteSchedule(Long loginUserId,Long id) {
+        Schedule schedule = scheduleRepository
+                .findByIdAndCalendar_Owner_Id(id, loginUserId)
+                .orElseThrow(() ->
+                        new EntityNotFoundException("삭제 권한이 없는 스케줄입니다. id=" + id)
+                );
 
         scheduleRepository.delete(schedule);
+
     }
 
 

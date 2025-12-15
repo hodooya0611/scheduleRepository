@@ -1,27 +1,26 @@
 package com.spring.config;
 
+import com.spring.domain.Member;
+import com.spring.repository.MemberRepository;
+import com.spring.security.CustomUserDetails;
+import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
-import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.Collections;
 
-@Component
+@RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
-
-    public JwtAuthenticationFilter(JwtUtil jwtUtil) {
-        this.jwtUtil = jwtUtil;
-    }
+    private final MemberRepository memberRepository;
 
     @Override
     protected void doFilterInternal(
@@ -30,7 +29,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             FilterChain filterChain
     ) throws ServletException, IOException {
 
-        // Authorization 헤더에서 토큰 꺼내기
         String authHeader = request.getHeader("Authorization");
         String token = null;
 
@@ -38,20 +36,32 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             token = authHeader.substring(7);
         }
 
-        // 토큰이 유효하면 SecurityContext에 등록
         if (token != null && jwtUtil.validateToken(token)) {
-            String memberId = jwtUtil.getMemberId(token);
-            String role = jwtUtil.getRole(token);
+            try {
+                Long memberId = jwtUtil.getMemberId(token);
 
-            UsernamePasswordAuthenticationToken authentication =
-                    new UsernamePasswordAuthenticationToken(
-                            new User(memberId, "", Collections.emptyList()), // 사용자 정보
-                            null,
-                            Collections.emptyList() // 권한 리스트
-                    );
+                Member member = memberRepository.findById(memberId)
+                        .orElseThrow(() -> new RuntimeException("회원 없음"));
 
-            authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+                CustomUserDetails userDetails =
+                        new CustomUserDetails(member);
+
+                UsernamePasswordAuthenticationToken authentication =
+                        new UsernamePasswordAuthenticationToken(
+                                userDetails,
+                                null,
+                                userDetails.getAuthorities()
+                        );
+
+                authentication.setDetails(
+                        new WebAuthenticationDetailsSource().buildDetails(request)
+                );
+
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+
+            } catch (JwtException | IllegalArgumentException e) {
+                SecurityContextHolder.clearContext();
+            }
         }
 
         filterChain.doFilter(request, response);

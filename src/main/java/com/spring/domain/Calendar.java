@@ -12,8 +12,13 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString
-@Table(name = "calendar")
+@ToString(exclude = "owner")
+@Table(
+        name = "calendar",
+        uniqueConstraints = {
+                @UniqueConstraint(columnNames = {"owner_id", "is_default"})
+        }
+)
 public class Calendar {
 
     @Id
@@ -34,17 +39,21 @@ public class Calendar {
     private Member owner;
 
     // 생성 날짜
-    @Column(nullable = false)
+    @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
     // 수정 날짜
-    @Column(nullable = false)
+    @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
+
+    @Column(name = "is_default", nullable = false)
+    private boolean isDefault;
 
     @PrePersist
     public void prePersist() {
-        this.createdAt = LocalDateTime.now();
-        this.updatedAt = LocalDateTime.now();
+        LocalDateTime now = LocalDateTime.now();
+        this.createdAt = now;
+        this.updatedAt = now;
     }
 
     @PreUpdate

@@ -2,6 +2,7 @@ package com.spring.controller;
 
 import com.spring.domain.Calendar;
 import com.spring.request.CalendarRequest;
+import com.spring.security.CustomUserDetails;
 import com.spring.service.CalendarService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -17,6 +18,9 @@ public class CalenderController {
     @PostMapping
     public Calendar createCalendar(@AuthenticationPrincipal CustomUserDetails userDetails,
                                    @RequestBody CalendarRequest calendar) {
-        return calendarService.createCalendar(calendar);
+        System.out.println("calendar.name = " + calendar.name());
+        System.out.println("calendar.description = " + calendar.description());
+        Long loginUserId = userDetails.getId();
+        return calendarService.createCalendar(loginUserId,calendar);
     }
 }

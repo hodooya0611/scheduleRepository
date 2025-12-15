@@ -1,5 +1,8 @@
 package com.spring.service;
 
+import com.spring.domain.Calendar;
+import com.spring.domain.Member;
+import com.spring.repository.CalendarRepository;
 import lombok.RequiredArgsConstructor;
 import com.spring.mapper.MemberMapper;
 import com.spring.repository.MemberRepository;
@@ -16,6 +19,7 @@ public class MemberServiceImpl implements MemberService {
     private final PasswordEncoder passwordEncoder;
 
     private final MemberRepository memberRepository;
+    private final CalendarRepository calendarRepository;
     private final MemberMapper memberMapper;
 
     @Override
@@ -23,6 +27,15 @@ public class MemberServiceImpl implements MemberService {
         var memberRequestDto = memberMapper.toMemberDto(memberRequest); // JSON → DTO
         var memberRequestEntity = memberMapper.toMemberEntity(memberRequestDto);   // DTO → Entity
         memberRequestEntity.setPassword(passwordEncoder.encode(memberRequestEntity.getPassword()));
-            memberRepository.save(memberRequestEntity);
+
+        Member savedMember = memberRepository.save(memberRequestEntity);
+
+        Calendar defaultCalendar = new Calendar();
+        defaultCalendar.setOwner(savedMember);
+        defaultCalendar.setName("Basic calendar");
+        defaultCalendar.setDefault(true);
+
+        calendarRepository.save(defaultCalendar);
+
     }
 }

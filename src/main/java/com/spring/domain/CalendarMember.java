@@ -12,8 +12,13 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString
-@Table(name = "calendar")
+@ToString(exclude = {"calendar", "member"})
+@Table(
+        name = "calendar_member",
+        uniqueConstraints = {
+                @UniqueConstraint(columnNames = {"calendar_id", "member_id"})
+        }
+)
 public class CalendarMember {
 
     @Id
