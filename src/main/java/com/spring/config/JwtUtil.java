@@ -30,7 +30,6 @@ public class JwtUtil {
     public String generateToken(Long memberId, String role) {
         return Jwts.builder()
                 .setSubject(String.valueOf(memberId))              // 토큰 주체
-                .claim("role", role)              // 추가 클레임
                 .setIssuedAt(new Date())          // 발급시간
                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME)) // 만료시간
                 .signWith(key)                    // 서명
@@ -49,11 +48,6 @@ public class JwtUtil {
     // 토큰에서 memberId 가져오기
     public Long getMemberId(String token) {
         return Long.valueOf(extractClaims(token).getSubject());
-    }
-
-    // 토큰에서 role 가져오기
-    public String getRole(String token) {
-        return extractClaims(token).get("role", String.class);
     }
 
     // 토큰 유효성 검사

@@ -15,9 +15,9 @@ public interface CalendarRepository extends JpaRepository<Calendar, Long> {
 
     Optional<Calendar> findByOwnerAndIsDefaultTrue(Member owner);
 
-    Optional<Calendar> findByOwnerAndIsDefaultTrue(Long loginUserId);
+    Optional<Calendar> findByOwner_IdAndIsDefaultTrue(Long ownerId);
 
     Optional<Calendar> findByIdAndOwner(Long calendarId, Member owner);
 
-    Optional<Calendar> findByOwnerId(Long loginUserId);
+    List<Calendar> findAllByOwner_Id(Long loginUserId);
 }

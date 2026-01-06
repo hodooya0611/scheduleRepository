@@ -14,6 +14,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -29,7 +30,7 @@ public class HomeServiceImpl implements HomeService {
 
         // 1️⃣ 캘린더 목록
         List<HomeResponseDto.CalendarSummary> calendars =
-                calendarRepository.findByOwnerId(loginUserId)
+                calendarRepository.findAllByOwner_Id(loginUserId)
                         .stream()
                         .map(c -> new HomeResponseDto.CalendarSummary(
                                 c.getId(),
@@ -38,15 +39,26 @@ public class HomeServiceImpl implements HomeService {
                         ))
                         .toList();
 
-        // 2️⃣ 기본 캘린더
-        Calendar defaultCalendar =
-                calendarRepository.findByOwnerAndIsDefaultTrue(loginUserId)
-                        .orElseThrow(() -> new IllegalStateException("기본 캘린더 없음"));
 
         // 3️⃣ 기본 캘린더의 스케쥴
+        LocalDate now = LocalDate.now();
+
+        // 이번 달 1일
+        LocalDate startDate = now.withDayOfMonth(1);
+
+        // 이번 달 마지막 날
+        LocalDate endDate = now.withDayOfMonth(now.lengthOfMonth());
+
+
+        // 2️⃣ 기본 캘린더
+        Calendar defaultCalendar =
+                calendarRepository.findByOwner_IdAndIsDefaultTrue(loginUserId)
+                        .orElseThrow(() -> new IllegalStateException("기본 캘린더 없음"));
+
+
         List<HomeResponseDto.ScheduleSummary> schedules =
                 scheduleRepository.findByCalendar_Owner_IdAndStartDateBetween(
-                                loginUserId,
+                                defaultCalendar.getId(),
                                 startDate,
                                 endDate
                         ).stream()

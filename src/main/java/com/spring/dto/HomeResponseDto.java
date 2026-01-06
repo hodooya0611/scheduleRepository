@@ -1,0 +1,22 @@
+package com.spring.dto;
+
+import java.time.LocalDate;
+import java.util.List;
+
+public record HomeResponseDto(
+        List<CalendarSummary> calendarList,
+        List<ScheduleSummary> scheduleList
+) {
+    public record CalendarSummary(
+            Long id,
+            String name,
+            boolean isDefault
+    ) {}
+
+    public record ScheduleSummary(
+            Long id,
+            String title,
+            LocalDate startDate,
+            LocalDate endDate
+    ) {}
+}
