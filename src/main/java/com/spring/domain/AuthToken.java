@@ -25,7 +25,7 @@ public class AuthToken {
     private String token;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id", nullable = false)
+    @JoinColumn(name = "member_id", nullable = true)
     private Member member;
 
     @Column(nullable = false)
@@ -37,8 +37,19 @@ public class AuthToken {
 
     private boolean used;
 
+    @Column(columnDefinition = "LONGTEXT")
+    private String payload;
+
     @Builder.Default
     private LocalDateTime createdDate = LocalDateTime.now();
+
+    public boolean isExpired() {
+        return expiryDate.isBefore(LocalDateTime.now());
+    }
+
+    public void markUsed() {
+        this.used = true;
+    }
 
 }
 

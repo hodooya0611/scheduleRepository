@@ -3,9 +3,10 @@ package com.spring.service;
 import com.spring.domain.AuthToken;
 import com.spring.domain.Member;
 import com.spring.domain.enums.TokenType;
+import com.spring.exception.BusinessException;
+import com.spring.exception.ErrorCode;
 import com.spring.repository.AuthTokenRepository;
 import com.spring.request.ResetPasswordRequest;
-import jakarta.mail.internet.MimeMessage;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import com.spring.config.JwtUtil;
@@ -14,7 +15,6 @@ import com.spring.mapper.LoginMapper;
 import com.spring.repository.MemberRepository;
 import com.spring.request.LoginRequest;
 import com.spring.request.PasswordResetRequest;
-import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -38,10 +38,10 @@ public class AuthServiceImpl implements AuthService {
         var requestDto = loginMapper.toLoginDto(request);
 
         var member = memberRepository.findByMemberId(requestDto.getMemberId())
-                .orElseThrow(() -> new EntityNotFoundException("해당 아이디를 찾을 수 없습니다. id=" + requestDto.getMemberId()));
+                .orElseThrow(() -> new BusinessException(ErrorCode.ID_NOT_FOUND));
 
         if (!passwordEncoder.matches(requestDto.getPassword(), member.getPassword())) {
-            throw new RuntimeException("비밀번호 틀림");
+            throw new BusinessException(ErrorCode.INVALID_PASSWORD);
         }
 
         String token = jwtUtil.generateToken(member.getId(), member.getRole());

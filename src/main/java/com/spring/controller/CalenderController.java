@@ -18,8 +18,6 @@ public class CalenderController {
     @PostMapping
     public Calendar createCalendar(@AuthenticationPrincipal CustomUserDetails userDetails,
                                    @RequestBody CalendarRequest calendar) {
-        System.out.println("calendar.name = " + calendar.name());
-        System.out.println("calendar.description = " + calendar.description());
         Long loginUserId = userDetails.getId();
         return calendarService.createCalendar(loginUserId,calendar);
     }
