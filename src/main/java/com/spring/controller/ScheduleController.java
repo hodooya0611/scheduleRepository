@@ -35,6 +35,17 @@ public class ScheduleController {
         return scheduleMapper.toScheduleListResponseDto(scheduleResult);
     }
 
+    @GetMapping("/shared")
+    public List<ScheduleDetailResponseDto> findSharedSchedule(
+            @AuthenticationPrincipal CustomUserDetails userDetails, @RequestParam String startDate,@RequestParam String endDate,
+            @RequestParam Long calendarId
+    ) {
+        var scheduleResult = scheduleService.findAllSharedSchedule(userDetails.getId(),startDate,endDate,calendarId);
+        return scheduleMapper.toScheduleListResponseDto(scheduleResult);
+    }
+
+
+
     @GetMapping("/view/{id}")
     public ResponseEntity<ScheduleDetailResponseDto> findSchedule(@AuthenticationPrincipal CustomUserDetails userDetails, @PathVariable Long id) {
 

@@ -2,6 +2,9 @@ package com.spring.service;
 
 import com.spring.domain.Calendar;
 import com.spring.domain.Member;
+import com.spring.exception.BusinessException;
+import com.spring.exception.ErrorCode;
+import com.spring.repository.CalendarMemberRepository;
 import com.spring.repository.CalendarRepository;
 import com.spring.repository.MemberRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -26,6 +29,8 @@ public class ScheduleServiceImpl implements ScheduleService {
     private final ScheduleMapper scheduleMapper;
     private final MemberRepository memberRepository;
     private final CalendarRepository calendarRepository;
+    private final CalendarMemberRepository calendarMemberRepository;
+
 
 
     @Override
@@ -63,6 +68,26 @@ public class ScheduleServiceImpl implements ScheduleService {
                         end
                 );
     }
+
+    @Override
+    public List<Schedule> findAllSharedSchedule(Long loginUserId, String startDate, String endDate, Long calendarId) {
+
+        Calendar calendar = calendarRepository.findById(calendarId).orElseThrow(() -> new BusinessException(ErrorCode.CALENDAR_NOT_FOUND));
+
+        Member member = memberRepository.findById(loginUserId).orElseThrow(() -> new BusinessException(ErrorCode.MEMBER_NOT_FOUND));
+
+        var checkflg = calendarMemberRepository.existsByCalendarAndMember(calendar, member);
+
+        if(!checkflg){
+            throw new  BusinessException(ErrorCode.CALENDAR_ACCESS_DENIED);
+        }
+
+        LocalDate start = LocalDate.parse(startDate);
+        LocalDate end = LocalDate.parse(endDate);
+
+        return scheduleRepository.findByCalendarAndStartDateBetween(calendar,start,end);
+    }
+
 
     @Override
     public ScheduleDetailResponseDto findSchedule(Long loginUserId, Long id) {

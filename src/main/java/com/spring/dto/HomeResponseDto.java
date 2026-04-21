@@ -5,6 +5,9 @@ import java.util.List;
 
 public record HomeResponseDto(
         List<CalendarSummary> calendarList,
+
+        List<CalendarSummary> sharedCalendarList,
+
         List<ScheduleSummary> scheduleList
 ) {
     public record CalendarSummary(

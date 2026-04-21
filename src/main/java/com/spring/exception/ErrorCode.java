@@ -9,6 +9,12 @@ public enum ErrorCode {
     ID_NOT_FOUND(HttpStatus.UNAUTHORIZED, "IDまたはパスワードが正しくありません。"),
 
     INVALID_PASSWORD(HttpStatus.UNAUTHORIZED, "IDまたはパスワードが正しくありません。"),
+
+    MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "ユーザーが見つかりません。"),
+
+    CALENDAR_NOT_FOUND(HttpStatus.NOT_FOUND, "カレンダーが見つかりません。"),
+
+    CALENDAR_ACCESS_DENIED(HttpStatus.FORBIDDEN, "アクセス権限がありません。"),
     ;
 
     private final HttpStatus status;

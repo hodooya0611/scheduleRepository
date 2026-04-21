@@ -14,4 +14,6 @@ public interface CalendarMemberRepository extends JpaRepository<CalendarMember, 
 
     boolean existsByCalendarAndMember(Calendar calendar,Member member);
 
+    List<CalendarMember> findByMember(Member member);
+
 }

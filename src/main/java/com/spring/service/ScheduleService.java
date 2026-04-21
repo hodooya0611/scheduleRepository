@@ -14,6 +14,8 @@ public interface ScheduleService {
 
     List<Schedule> findAllSchedule(Long loginUserId,String startDate, String endDate);
 
+    List<Schedule>findAllSharedSchedule(Long loginUserId,String startDate, String endDate, Long calendarId);
+
     ScheduleDetailResponseDto findSchedule(Long loginUserId, Long id);
 
     void updateSchedule(Long loginUserId,Long id,ScheduleRequest scheduleRequest);
