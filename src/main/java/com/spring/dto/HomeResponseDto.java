@@ -8,7 +8,9 @@ public record HomeResponseDto(
 
         List<CalendarSummary> sharedCalendarList,
 
-        List<ScheduleSummary> scheduleList
+        List<ScheduleSummary> scheduleList,
+
+        List<ScheduleSummary> sharedScheduleList
 ) {
     public record CalendarSummary(
             Long id,

@@ -1,5 +1,6 @@
 package com.spring.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -36,6 +37,7 @@ public class Calendar {
     // 캘린더를 생성한 사람 (Owner)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "owner_id", nullable = false)
+    @JsonIgnore
     private Member owner;
 
     // 생성 날짜

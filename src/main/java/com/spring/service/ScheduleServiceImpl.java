@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -33,16 +34,22 @@ public class ScheduleServiceImpl implements ScheduleService {
 
 
 
+    // 스케쥴 등록하기
     @Override
     public Schedule createSchedule(Long loginUserId, ScheduleRequest scheduleRequest) {
 
-        Member member = memberRepository.findById(loginUserId).orElseThrow(() -> new IllegalArgumentException("Member not found"));
+        Member member = memberRepository.findById(loginUserId).orElseThrow(() -> new BusinessException(ErrorCode.MEMBER_NOT_FOUND));
 
         Calendar calendar;
 
         if(scheduleRequest.calendarId() != null) {
-            calendar = calendarRepository.findByIdAndOwner(scheduleRequest.calendarId(),member).orElseThrow(()
-                    ->new IllegalArgumentException("Member not found"));
+            calendar  = calendarRepository.findById(scheduleRequest.calendarId()).orElseThrow(() -> new BusinessException(ErrorCode.CALENDAR_NOT_FOUND));
+
+            var calendarMember = calendarMemberRepository.existsByCalendarAndMember(calendar,member);
+
+            if(!calendarMember && !calendar.getOwner().getId().equals(loginUserId)) {
+                throw new BusinessException(ErrorCode.CALENDAR_ACCESS_DENIED);
+            }
         } else {
             calendar = calendarRepository.findByOwnerAndIsDefaultTrue(member)
                     .orElseThrow(() -> new IllegalStateException("기본 캘린더 없음"));
@@ -55,40 +62,41 @@ public class ScheduleServiceImpl implements ScheduleService {
         return scheduleRepository.save(schedule);
     }
 
-    @Override
-    public List<Schedule> findAllSchedule(Long loginUserId,String startDate, String endDate) {
+    // 스케쥴 찾기
+        @Override
+        public List<Schedule> findSchedule(Long loginUserId,String startDate, String endDate, Long calendarId) {
 
         LocalDate start = LocalDate.parse(startDate);
         LocalDate end = LocalDate.parse(endDate);
 
-        return scheduleRepository
-                .findByCalendar_Owner_IdAndStartDateBetween(
-                        loginUserId,
-                        start,
-                        end
-                );
-    }
+        List<Schedule> scheduleList;
 
-    @Override
-    public List<Schedule> findAllSharedSchedule(Long loginUserId, String startDate, String endDate, Long calendarId) {
+        if(calendarId == null) {
+            scheduleList = scheduleRepository
+                    .findByCalendar_Owner_IdAndStartDateBetween(
+                            loginUserId,
+                            start,
+                            end
+                    );
+        } else {
 
-        Calendar calendar = calendarRepository.findById(calendarId).orElseThrow(() -> new BusinessException(ErrorCode.CALENDAR_NOT_FOUND));
+         Calendar calendar = calendarRepository.findById(calendarId).orElseThrow(() -> new BusinessException(ErrorCode.CALENDAR_NOT_FOUND));
 
-        Member member = memberRepository.findById(loginUserId).orElseThrow(() -> new BusinessException(ErrorCode.MEMBER_NOT_FOUND));
+         Member member = memberRepository.findById(loginUserId).orElseThrow(() -> new BusinessException(ErrorCode.MEMBER_NOT_FOUND));
 
-        var checkflg = calendarMemberRepository.existsByCalendarAndMember(calendar, member);
+            var calendarMember = calendarMemberRepository.existsByCalendarAndMember(calendar,member);
 
-        if(!checkflg){
-            throw new  BusinessException(ErrorCode.CALENDAR_ACCESS_DENIED);
+            if(!calendarMember && !calendar.getOwner().getId().equals(loginUserId)) {
+                throw new BusinessException(ErrorCode.CALENDAR_ACCESS_DENIED);
+            }
+
+         scheduleList =  scheduleRepository.findByCalendarAndStartDateBetween(calendar,start,end);
         }
 
-        LocalDate start = LocalDate.parse(startDate);
-        LocalDate end = LocalDate.parse(endDate);
-
-        return scheduleRepository.findByCalendarAndStartDateBetween(calendar,start,end);
+        return scheduleList;
     }
 
-
+    // 스케쥴 상세보기
     @Override
     public ScheduleDetailResponseDto findSchedule(Long loginUserId, Long id) {
 
@@ -100,6 +108,7 @@ public class ScheduleServiceImpl implements ScheduleService {
         return scheduleMapper.toScheduleResponseDto(schedule);
     }
 
+    // 스케쥴 수정하기
     @Override
     @Transactional
     public void updateSchedule(Long loginUserId,Long id, ScheduleRequest request) {
@@ -114,6 +123,7 @@ public class ScheduleServiceImpl implements ScheduleService {
 
     }
 
+    // 스케쥴 지우기
     @Override
     public void deleteSchedule(Long loginUserId,Long id) {
         Schedule schedule = scheduleRepository

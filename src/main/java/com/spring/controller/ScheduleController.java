@@ -30,20 +30,10 @@ public class ScheduleController {
     @GetMapping
     public List<ScheduleDetailResponseDto> findAllSchedule(
             @AuthenticationPrincipal CustomUserDetails userDetails,@RequestParam String startDate,
-                                                     @RequestParam String endDate) {
-        var scheduleResult = scheduleService.findAllSchedule(userDetails.getId(),startDate,endDate);
+                                                     @RequestParam String endDate, @RequestParam(required = false) Long calendarId) {
+        var scheduleResult = scheduleService.findSchedule(userDetails.getId(),startDate,endDate, calendarId);
         return scheduleMapper.toScheduleListResponseDto(scheduleResult);
     }
-
-    @GetMapping("/shared")
-    public List<ScheduleDetailResponseDto> findSharedSchedule(
-            @AuthenticationPrincipal CustomUserDetails userDetails, @RequestParam String startDate,@RequestParam String endDate,
-            @RequestParam Long calendarId
-    ) {
-        var scheduleResult = scheduleService.findAllSharedSchedule(userDetails.getId(),startDate,endDate,calendarId);
-        return scheduleMapper.toScheduleListResponseDto(scheduleResult);
-    }
-
 
 
     @GetMapping("/view/{id}")

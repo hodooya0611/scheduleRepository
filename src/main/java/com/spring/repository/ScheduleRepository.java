@@ -29,4 +29,10 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
     List<Schedule> findByCalendarAndStartDateBetween(Calendar calendar,
                                                      LocalDate start,
                                                      LocalDate end);
+
+    List<Schedule> findByCalendarInAndStartDateBetween(
+            List<Calendar> calendars,
+            LocalDate start,
+            LocalDate end);
+
 }

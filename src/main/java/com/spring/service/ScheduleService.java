@@ -12,9 +12,7 @@ public interface ScheduleService {
 
     Schedule createSchedule(Long loginUserId, ScheduleRequest scheduleRequest);
 
-    List<Schedule> findAllSchedule(Long loginUserId,String startDate, String endDate);
-
-    List<Schedule>findAllSharedSchedule(Long loginUserId,String startDate, String endDate, Long calendarId);
+    List<Schedule> findSchedule(Long loginUserId,String startDate, String endDate, Long calendarId);
 
     ScheduleDetailResponseDto findSchedule(Long loginUserId, Long id);
 
