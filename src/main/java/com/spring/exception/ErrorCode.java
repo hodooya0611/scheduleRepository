@@ -12,9 +12,13 @@ public enum ErrorCode {
 
     MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "ユーザーが見つかりません。"),
 
+    SCHEDULE_NOT_FOUND(HttpStatus.NOT_FOUND, "日程が見つかりません。"),
+
     CALENDAR_NOT_FOUND(HttpStatus.NOT_FOUND, "カレンダーが見つかりません。"),
 
     CALENDAR_ACCESS_DENIED(HttpStatus.FORBIDDEN, "アクセス権限がありません。"),
+
+    UPDATE_ACCESS_DENIED(HttpStatus.FORBIDDEN, "修正権限がありません。"),
     ;
 
     private final HttpStatus status;

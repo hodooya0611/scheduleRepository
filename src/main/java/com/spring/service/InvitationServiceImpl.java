@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.spring.domain.Calendar;
 import com.spring.domain.CalendarMember;
 import com.spring.domain.Member;
+import com.spring.domain.enums.CalendarRole;
 import com.spring.domain.enums.TokenType;
 import com.spring.domain.payload.InvitationCalendarPayload;
 import com.spring.repository.AuthTokenRepository;
@@ -136,7 +137,7 @@ public class InvitationServiceImpl implements InvitationService {
         CalendarMember calendarMember = CalendarMember.builder()
                 .calendar(calendar)
                 .member(member)
-                .role("EDITOR") // 기본 권한
+                .role(CalendarRole.EDITOR) // 기본 권한
                 .build();
 
         calendarMemberRepository.save(calendarMember);

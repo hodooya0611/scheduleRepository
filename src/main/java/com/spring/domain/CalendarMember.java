@@ -1,5 +1,6 @@
 package com.spring.domain;
 
+import com.spring.domain.enums.CalendarRole;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -37,7 +38,8 @@ public class CalendarMember {
 
     // 권한: OWNER / EDITOR / VIEWER 등
     @Column(nullable = false)
-    private String role;
+    @Enumerated(EnumType.STRING)
+    private CalendarRole role;
 
     private LocalDateTime invitedAt;
 

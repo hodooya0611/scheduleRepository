@@ -1,7 +1,9 @@
 package com.spring.service;
 
 import com.spring.domain.Calendar;
+import com.spring.domain.CalendarMember;
 import com.spring.domain.Member;
+import com.spring.domain.enums.CalendarRole;
 import com.spring.exception.BusinessException;
 import com.spring.exception.ErrorCode;
 import com.spring.repository.CalendarMemberRepository;
@@ -111,16 +113,23 @@ public class ScheduleServiceImpl implements ScheduleService {
     // 스케쥴 수정하기
     @Override
     @Transactional
-    public void updateSchedule(Long loginUserId,Long id, ScheduleRequest request) {
+    public void updateSchedule(Long loginUserId,Long scheduleId, ScheduleRequest request) {
         Schedule schedule = scheduleRepository
-                .findByIdAndCalendar_Owner_Id(id, loginUserId)
+                .findById(scheduleId)
                 .orElseThrow(() ->
-                        new EntityNotFoundException("수정 권한이 없는 스케줄입니다. id=" + id)
-                );
+                        new BusinessException(ErrorCode.SCHEDULE_NOT_FOUND));
+
+        CalendarMember calendarMember = calendarMemberRepository
+                .findByCalendarIdAndMemberId(schedule.getCalendar().getId(), loginUserId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.MEMBER_NOT_FOUND)
+        );
+
+        if(calendarMember.getRole() == CalendarRole.VIEWER) {
+            throw new  BusinessException(ErrorCode.UPDATE_ACCESS_DENIED);
+        }
 
         var scheduleRequestDto = scheduleMapper.toScheduleDto(request);
         schedule.updateSchedule(scheduleRequestDto);
-
     }
 
     // 스케쥴 지우기

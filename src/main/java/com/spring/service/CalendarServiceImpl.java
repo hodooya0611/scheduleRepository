@@ -1,8 +1,11 @@
 package com.spring.service;
 
 import com.spring.domain.Calendar;
+import com.spring.domain.CalendarMember;
 import com.spring.domain.Member;
+import com.spring.domain.enums.CalendarRole;
 import com.spring.mapper.CalendarMapper;
+import com.spring.repository.CalendarMemberRepository;
 import com.spring.repository.CalendarRepository;
 import com.spring.repository.MemberRepository;
 import com.spring.request.CalendarRequest;
@@ -17,6 +20,7 @@ public class CalendarServiceImpl implements CalendarService {
 
     private final CalendarRepository calendarRepository;
     private final MemberRepository memberRepository;
+    private final CalendarMemberRepository calendarMemberRepository;
 
     private final CalendarMapper calendarMapper;
 
@@ -31,6 +35,15 @@ public class CalendarServiceImpl implements CalendarService {
         Calendar calendar = calendarMapper.toCalendarEntity(calendarRequest);
         calendar.setOwner(owner);
 
-        return calendarRepository.save(calendar);
+        var savedCalendar = calendarRepository.save(calendar);
+
+        CalendarMember ownerMember = CalendarMember.builder()
+                .calendar(savedCalendar)
+                .member(owner)
+                .role(CalendarRole.OWNER)
+                .build();
+
+        calendarMemberRepository.save(ownerMember);
+        return savedCalendar;
     }
 }
